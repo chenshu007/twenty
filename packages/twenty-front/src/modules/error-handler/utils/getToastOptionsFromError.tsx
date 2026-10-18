@@ -1,3 +1,4 @@
+import { isAbortError } from '@/error-handler/utils/isAbortError';
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { isErrorLike } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
@@ -16,11 +17,11 @@ export const getToastOptionsFromError = ({
   error,
   ...options
 }: GetToastOptionsFromErrorParams): ToastOptions | undefined => {
-  const errorLike = isErrorLike(error) ? error : undefined;
-
-  if (errorLike?.name === 'AbortError') {
+  if (isAbortError(error)) {
     return;
   }
+
+  const errorLike = isErrorLike(error) ? error : undefined;
 
   const conflictingRecord = isDefined(errorLike)
     ? getConflictingRecordFromApolloError(errorLike)

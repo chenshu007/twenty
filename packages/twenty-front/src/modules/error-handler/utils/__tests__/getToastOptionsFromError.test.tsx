@@ -35,4 +35,10 @@ describe('getToastOptionsFromError', () => {
       }),
     ).toBeUndefined();
   });
+
+  it('suppresses WebKit cancelled fetches spelled "Canceled"', () => {
+    expect(
+      getToastOptionsFromError({ error: new TypeError('Canceled') }),
+    ).toBeUndefined();
+  });
 });

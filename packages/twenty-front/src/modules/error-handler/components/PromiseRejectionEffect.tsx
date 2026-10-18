@@ -2,6 +2,7 @@ import { useCallback, useEffect } from 'react';
 
 import { checkIfItsAViteStaleChunkLazyLoadingError } from '@/error-handler/utils/checkIfItsAViteStaleChunkLazyLoadingError';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { isAbortError } from '@/error-handler/utils/isAbortError';
 import {
   CombinedGraphQLErrors,
   CombinedProtocolErrors,
@@ -40,17 +41,11 @@ export const PromiseRejectionEffect = () => {
         return; // already handled by apolloLink
       }
 
-      const isAbortError =
-        error?.networkError?.name === 'AbortError' ||
-        error?.name === 'AbortError' ||
-        (error instanceof TypeError &&
-          error.message.toLowerCase() === 'cancelled');
-
       const isViteStaleChunkLazyLoadingError =
         error instanceof Error &&
         checkIfItsAViteStaleChunkLazyLoadingError(error);
 
-      if (!isAbortError && !isViteStaleChunkLazyLoadingError) {
+      if (!isAbortError(error) && !isViteStaleChunkLazyLoadingError) {
         enqueueToast(getToastOptionsFromError({ error }));
       }
 
